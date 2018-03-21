@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="UTF-8">
+		
+		<script type="text/javascript">
+			var sendCommand = 1;
+			var count = 0;
+			
+			//Key Pressed
+			document.addEventListener("keydown", function (evt) {
+				count = count + 1;
+				if(count > 10) {
+					count = 2;
+				}
+				if(count > 2) {
+					if (evt.keyCode == "38" && sendCommand) {	// up arrow
+						sendData("D1") 
+						sendCommand = 0;
+					}
+					else if (evt.keyCode == "40" && sendCommand) {	// down arrow
+						sendData("U1") 
+						sendCommand = 0;
+					}
+					else if (evt.keyCode == "37" && sendCommand) {	// left arrow
+						sendData("L1") 
+						sendCommand = 0;
+					}
+					else if (evt.keyCode == "39" && sendCommand) {	// right arrow
+						sendData("R1")
+						sendCommand = 0;
+					}
+				}
+         
+			});
+			
+			//Key Released
+			document.addEventListener("keyup", function (evt) {
+				if(count > 2) {
+					if(evt.keyCode == "37" || evt.keyCode == "38" || evt.keyCode == "39" || evt.keyCode == "40") {
+						sendData("STOP");
+						sendCommand = 1;
+					}
+					count = 0;
+				}
+				else {
+					if (evt.keyCode == "38" && sendCommand) {	// up arrow
+						sendData("D3") 
+						sendCommand = 0;
+					}
+					else if (evt.keyCode == "40" && sendCommand) {	// down arrow
+						sendData("U3") 
+						sendCommand = 0;
+					}
+					else if (evt.keyCode == "37" && sendCommand) {	// left arrow
+						sendData("L3") 
+						sendCommand = 0;
+					}
+					else if (evt.keyCode == "39" && sendCommand) {	// right arrow
+						sendData("R3")
+						sendCommand = 0;
+					}
+				}
+             
+			});
+         
+			function sendData(motorData) {	//Send data for ESP32 to resond to
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+					}
+				};
+				xhttp.open("GET", "setMotors?motorState="+motorData, true);
+				xhttp.send();
+			}
+			
+			var refreshRate = 5; //ms
+			
+			function reload()
+			{
+				setTimeout('reloadImg("refresh")',refreshRate)
+			};
+			
+			function reloadImg(id)
+			{
+				var obj = document.getElementById(id);
+				var date = new Date();
+				obj.src = "http://USER_NAME:PASSWORD@IP_OF_CAMERA/mjpeg/snap.cgi?chn=1&t=" + Math.floor(date.getTime()/refreshRate);
+			}
+		</script>
+	</head>
+	<body>
+		<h2>SparkFun ESP32 Thing + WiFi Camera Remote Control</h2>
+		<img src="http://USER_NAME:PASSWORD@IP_OF_CAMERA/mjpeg/snap.cgi?chn=1" name="refresh" id="refresh" onload='reload(this)' onerror='reload(this)'>
+		<br/>
+		<h3>How to Control the Robot</h3>
+		<UL>
+			<LI>Use the arrow keys to control the robot. You can press and hold for continuous movement, or single presses for small movements.</LI>
+			<LI>Sometimes the robot doesn't receive a stop command, and will continue to move after the key has been released. Just give a single keyboard click to stop the robot.</LI>
+			<LI><b>Be patient!</b> The robot might go offline periodically due to signal strength, battery changes, or there are too many users connected. </LI>
+		</UL>
+		
+		<h3>Welcome to SparkFun Engineering</h3>
+		<p>
+		The robot is in SparkFun's Engineering department, feel free to drive around and pop in and out of people's offices. Alex's office (who made the robot) is in the office with
+		Han Solo on the door. Barriers are set up to keep the robot in Engineering, please try not to crash into them (or else he'll get stuck until someone frees it).
+		</p>
+   </body>
+</html>
